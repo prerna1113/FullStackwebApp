@@ -1,29 +1,27 @@
-import cors from "cors";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
 
 
-dotenv.config();
+
 const express = require('express');
-app.use(cors());
-app.use(express.json());
-
-mongoose.connect(process.env.MONGO_URL,{
-    userNewUrlParser: true,
-    useUnifiedTopology:true,
-}).then(()=> console.log("MongoDB connected"))
-.catch(err=> console.log(err));
-
-
+const mongoose = require('mongoose')
 const app = express();
 const PORT=8080;
 
+mongoose.connect('mongodb://localhost:27017/crud')
 
+const UserSchema = new  mongoose.Schema({
+    name:String,
+    age:Number
+})
 
-app.get('/',(req,res)=>{
-    res.send('Netflix clone Api is running...');
+const UserModel = mongoose.model("users",UserSchema)
+
+app.get('/getUsers',(req,res)=>{
+    UserModel.find({}).then(function(users){
+        res.json(users)
+    }).catch(function(err){
+        console.log(err)
+    })
 });
-
 
 
 app.listen(PORT,()=>{
